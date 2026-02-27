@@ -32,4 +32,10 @@ document.getElementById("clear").addEventListener("click", async () => {
   await refreshCount();
 });
 
+document.getElementById("exportHighlights").addEventListener("click", async () => {
+  const tab = await getActiveTab();
+  if (!tab?.id) return;
+  await sendToTab(tab.id, { type: "EXPORT_HIGHLIGHTS_ONLY" });
+});
+
 refreshCount();

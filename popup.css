@@ -36,6 +36,11 @@ h1 {
 .primary { background: #1a73e8; color: white; }
 .danger { background: #e53935; color: white; }
 
+.btn:not(.primary):not(.danger) {
+  background: #f1f3f4;
+  color: #202124;
+}
+
 .hint {
   font-size: 11px;
   color: #666;
