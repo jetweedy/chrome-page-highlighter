@@ -9,9 +9,12 @@ This project was originally built to make it easier to review and export confere
 ## Features
 
 - Highlight selected text in multiple colors
+- Floating highlight toolbar appears when text is selected
 - Highlights persist across page reloads
 - Automatically restores highlights even on pages that load content dynamically
-- Print or save pages as PDF with highlights intact
+- Export only your highlighted text to a clean printable view or PDF
+- Print or save full pages with highlights intact
+- Highlights sync across your Chrome profile (via Chrome Sync)
 - Clear all highlights for a page with one click
 - Works on most standard HTML pages and many modern web apps
 
@@ -47,35 +50,62 @@ The extension will now be installed.
 
 ### Highlight text
 
+Option 1:
+
 - Select text on any webpage
+- Click a color in the floating toolbar
+
+Option 2:
+
+- Select text
 - Right-click
 - Choose **Page Highlighter**
 - Select a highlight color
 
-### Export / Print
+---
 
-- Click the extension icon in the Chrome toolbar
+### Export highlights only
+
+- Click the extension icon
+- Click **Export highlights only**
+- Use Chrome's print dialog to save as PDF
+
+---
+
+### Print page with highlights
+
+- Click the extension icon
 - Click **Print / Save as PDF**
+
+---
 
 ### Clear highlights
 
-- Right-click the page
-- Choose **Clear highlights on this page**
+- Click the extension icon and select **Clear highlights**, or
+- Right-click the page and choose **Clear highlights on this page**
 
 ---
 
 ## How It Works
 
-Highlights are stored locally using Chrome's extension storage API and anchored to the page using a combination of:
+Highlights are stored using Chrome's Sync storage API, allowing them to persist across page reloads and sync across your Chrome profile.
 
-- DOM position paths
-- Text quote matching
+Highlights are anchored using DOM position paths with text-based fallback matching for reliability.
 
-The extension also monitors the page for dynamic content changes and restores highlights if the page re-renders.
+The extension monitors the page for dynamic content changes and restores highlights if the page re-renders.
 
-No data is sent to any external server.
+---
 
-All highlights remain private and stored locally on your machine.
+## Storage
+
+Highlights are stored using Chrome Sync storage.
+
+This allows highlights to:
+
+- Persist across browser restarts
+- Sync across devices where you are signed into Chrome
+
+No external servers are used.
 
 ---
 
@@ -121,6 +151,19 @@ Possible enhancements include:
 - Export highlights only
 - JSON import/export
 - Chrome sync support
+
+---
+
+## Current Version
+
+v1.0
+
+Includes:
+
+- Floating highlight toolbar
+- Persistent highlights
+- Export highlights only
+- Chrome Sync support
 
 ---
 
