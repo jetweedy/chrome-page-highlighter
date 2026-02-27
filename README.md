@@ -136,12 +136,6 @@ Jonathan Tweedy
 
 ---
 
-## Contributing
-
-Pull requests and suggestions are welcome.
-
----
-
 ## Why This Exists
 
 Many existing annotation extensions are heavy, complex, or unreliable on modern web apps.
