@@ -7,8 +7,8 @@ This project was originally built to make it easier to review and export confere
 ---
 
 ## TO DO:
- _ Make individual highlights removable.
- _ Make highlighting more effective/smoother as glitches are found.
+ * Make individual highlights removable.
+ * Make highlighting more effective/smoother as glitches are found.
 
 ---
 
