@@ -1,3 +1,9 @@
+// background.js — Page Highlighter (frame-aware)
+// - Creates context menu items for highlight colors + clear
+// - Sends highlight commands to the correct frame via info.frameId
+// - Provides GET_TOP_TAB_URL so all frames share one storage key (top tab URL)
+// - Broadcasts CLEAR to all frames (so iframes clear immediately too)
+
 const MENU_ROOT = "ph_root";
 
 const COLORS = [
@@ -32,9 +38,11 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-function sendMessageToTab(tabId, message) {
+function sendMessageToTab(tabId, message, frameId) {
   return new Promise((resolve, reject) => {
-    chrome.tabs.sendMessage(tabId, message, (resp) => {
+    const options = typeof frameId === "number" ? { frameId } : undefined;
+
+    chrome.tabs.sendMessage(tabId, message, options, (resp) => {
       const err = chrome.runtime.lastError;
       if (err) reject(new Error(err.message));
       else resolve(resp);
@@ -58,11 +66,23 @@ function injectContentScript(tabId) {
   });
 }
 
-async function sendWithFallback(tabId, message) {
+// Try sending; if content script isn't present, inject and retry.
+// Note: for restricted pages, injection will fail.
+async function sendWithFallback(tabId, message, frameId) {
+  try {
+    return await sendMessageToTab(tabId, message, frameId);
+  } catch (e) {
+    // Common: "Could not establish connection. Receiving end does not exist."
+    await injectContentScript(tabId);
+    return await sendMessageToTab(tabId, message, frameId);
+  }
+}
+
+// Broadcast to all frames (no frameId). If content script missing, inject then retry.
+async function broadcastWithFallback(tabId, message) {
   try {
     return await sendMessageToTab(tabId, message);
   } catch (e) {
-    // Common: "Could not establish connection. Receiving end does not exist."
     await injectContentScript(tabId);
     return await sendMessageToTab(tabId, message);
   }
@@ -74,17 +94,29 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   try {
     if (typeof info.menuItemId === "string" && info.menuItemId.startsWith("ph_color_")) {
       const colorId = info.menuItemId.replace("ph_color_", "");
-      const res = await sendWithFallback(tab.id, { type: "HIGHLIGHT_SELECTION", colorId });
-      // If content script refused (complex selection), at least log it
+
+      // ✅ Send to the frame where the selection happened
+      const frameId = typeof info.frameId === "number" ? info.frameId : undefined;
+
+      const res = await sendWithFallback(tab.id, { type: "HIGHLIGHT_SELECTION", colorId }, frameId);
       if (!res?.ok) console.warn("Highlight failed:", res?.reason);
       return;
     }
 
     if (info.menuItemId === "ph_clear_page") {
-      await sendWithFallback(tab.id, { type: "CLEAR_PAGE_HIGHLIGHTS" });
+      // ✅ Broadcast clear so all frames unwrap immediately
+      await broadcastWithFallback(tab.id, { type: "CLEAR_PAGE_HIGHLIGHTS" });
       return;
     }
   } catch (e) {
     console.warn("Highlighter error:", e.message);
+  }
+});
+
+// Provide top-tab URL to content scripts (so all frames share one storage key)
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === "GET_TOP_TAB_URL") {
+    sendResponse({ ok: true, url: sender.tab?.url || "" });
+    return true;
   }
 });
