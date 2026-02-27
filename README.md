@@ -6,6 +6,12 @@ This project was originally built to make it easier to review and export confere
 
 ---
 
+## TO DO:
+ _ Make individual highlights removable.
+ _ Make highlighting more effective/smoother as glitches are found.
+
+---
+
 ## Features
 
 - Highlight selected text in multiple colors
