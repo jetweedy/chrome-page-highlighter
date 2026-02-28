@@ -7,6 +7,7 @@ This project was originally built to make it easier to review and export confere
 ---
 
 ## TO DO:
+ * Make notes open neatly in printable view
  * Make individual highlights removable.
  * Make highlighting more effective/smoother as glitches are found.
 
